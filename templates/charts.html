@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+<script>
+{% block jquery %}
+{% comment %} var endpoint = 'django/api/chart/data/' {% endcomment %}
+var endpoint = 'django/api/chart/data/'
+var defaultData = []
+var labels = [];
+$.ajax({
+    method: "GET",
+    url: endpoint ,
+    success: function(data){
+        labels = data.labels
+        defaultData = data.default
+        setChart()
+    },
+    error: function(error_data){
+        console.log(error_data)
+    }
+})
+
+function setChart(){
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Mood',
+            fill: false, 
+            data: defaultData,
+            backgroundColor: 'rgba(125, 250, 125)',
+            borderColor: 'rgba(125, 250, 125)',
+            borderWidth: 3
+        }]
+    },
+    options: {
+        scales: {
+            xAxes:[{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Days'
+                }
+            }],
+            yAxes:[{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Points'
+                }
+            }]
+        }
+    }
+});
+}
+{% endblock %}
+</script>
+
+{% block content %}
+<div class='container'>
+    <div class='col-sm-12' style='width:75%;'>
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+{% endblock content %}
